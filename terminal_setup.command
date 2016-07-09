@@ -9,6 +9,7 @@ printf '%s\n' '# Colors terminal' '  export CLICOLOR=1' '  export LSCOLORS=GxFxC
 
 # Python path
 printf '%s\n' '# Python path' '  export PYTHONPATH=/GitHub/cvip-python:$PYTHONPATH' >> ~/.bash_profile
+printf '%s\n' '# Python path' '  export PYTHONPATH=/GitHub/CommonTools/submodules/SharedTools/PythonUtils:$PYTHONPATH' >> ~/.bash_profile
 
 # Install Homebrew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
