@@ -1,10 +1,8 @@
-cd ~
-git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt
-
 # Terminal commands
 printf "%s\n" "# Terminal commands" "  alias ll='ls -lG'" "  alias run_biblatex='/GitHub/docker/latex/run_biblatex'" "  alias run_latex='/GitHub/docker/latex/run_latex'" >> ~/.bash_profile
 
 # Git Prompt
+git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt
 printf '%s\n' '# Git Prompt' '  export GIT_PROMPT_ONLY_IN_REPO=1' '  source ~/.bash-git-prompt/gitprompt.sh' >> ~/.bash_profile
 
 # Colors terminal
