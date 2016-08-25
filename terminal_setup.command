@@ -1,5 +1,5 @@
 # Terminal commands
-printf "%s\n" "# Terminal commands" "  alias ll='ls -lG'" "  alias run_biblatex='/GitHub/docker/latex/run_biblatex'" "  alias run_latex='/GitHub/docker/latex/run_latex'" >> ~/.bash_profile
+printf "%s\n" "# Terminal commands" "  alias ll='ls -lG'" "  alias run_biblatex='/GitHub/docker/latex/run_biblatex'" "  alias run_latex='/GitHub/docker/latex/run_latex'" "  bind '\"\e[A\": history-search-backward'" "  bind '\"\e[B\": history-search-forward'" >> ~/.bash_profile
 
 # Git Prompt
 git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt
