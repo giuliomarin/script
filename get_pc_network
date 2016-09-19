@@ -1,0 +1,1 @@
+for i in {2..254}; do host 192.168.5.${i}; done | grep -v "not found" | awk 'BEGIN {c=0} {c+=1; str=$1; sub(/.in-addr.arpa/, "", str); print str, "\t"$5} END {print "Found", c, "computers"}'
