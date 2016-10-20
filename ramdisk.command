@@ -11,6 +11,6 @@ echo
 
 REALSIZE=`expr $SIZE \* 4048`
 
-diskutil erasevolume HFS+ 'RAMDisk' `hdiutil attach -nomount ram://$REALSIZE`
+diskutil erasevolume HFS+ 'ramdisk' `hdiutil attach -nomount ram://$REALSIZE`
 
 ###########################

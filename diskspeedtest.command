@@ -3,7 +3,7 @@
 ##################################################
 # Write here the name of the disk you want to test
 
-DISK="RAMDisk"
+DISK="ramdisk"
 
 ##################################################
 
