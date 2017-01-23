@@ -1,0 +1,1 @@
+for f in $(<list of files>); do rsync -R $f <out folder>; done;
