@@ -1,0 +1,15 @@
+DROPBOX_LINK=$1
+DATE=`date '+%Y_%m_%d_%H_%M_%S'`
+
+# check if the link is a file or a folder
+if [[ $DROPBOX_LINK == */s/* ]];
+then
+  echo "Link is a file"
+  curl -L -O `echo $DROPBOX_LINK | sed 's/\?dl=0//g'`
+else
+  echo "Link is a folder"
+  filetmp=tmp_$DATE.zip;
+  curl -L -o $filetmp `echo $DROPBOX_LINK | sed 's/\?dl=0/?dl=1/g'`
+  unzip -u $filetmp -d ./$DATE
+  rm $filetmp
+fi
