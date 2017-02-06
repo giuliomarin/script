@@ -1,3 +1,7 @@
+# check input
+if [ $# -ne 1 ]; then echo "Usage: $0 DROPBOX_LINK"; exit 1; fi
+
+# define variables
 DROPBOX_LINK=$1
 DATE=`date '+%Y_%m_%d_%H_%M_%S'`
 
