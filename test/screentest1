@@ -1,0 +1,19 @@
+split -v
+focus right
+split
+screen -t top 0 htop
+focus down
+screen -t info 1 bash -c "ifconfig | grep 'eth\|192';bash"
+focus left
+screen -t Nitrogen 2 bash -c "cd ~/git/Nitrogen;history -s cmake . -B./windows; history -a; bash"
+screen -t build 3 bash -c "cd ~/git/Nitrogen/windows;history -s make . -j8;bash"
+screen -t run 4 bash -c "echo ./automation_server -client -parFile /home/aquifi/git/Nitrogen/apps/multicamscan/automation_server/data/clients.yml; cd ~/git/Nitrogen/windows/bin;bash"
+screen -t S900build 5 bash -c "cd ~/git/Nitrogen/buildscripts;echo ' ./BuildAll_Linux_aarch64_Release.sh automation_server' ;bash"
+screen -t AQPBuild 6 bash -c "echo /home/aquifi/git/NitrogenBuild; echo make -j8 automation_server ; cd ~/git/;bash /home/aquifi/git/docker-stack/androidbuilding/runLinux.sh"
+screen -t AQPDeoploy 7 bash -c "echo ./updateAQPs ; cd ~/scripts/; bash"
+screen -t calib 8 bash -c "echo ./calibprocessor -parFile /home/aquifi/git/Nitrogen/apps/multicamscan/calibprocessor/data/calibprocessor.yml; cd ~/git/Nitrogen/windows/bin;bash"
+resize -h +20
+select 4
+
+layout new one
+select 2

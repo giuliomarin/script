@@ -1,0 +1,1 @@
+cat /Library/Preferences/SystemConfiguration/com.apple.airport.preferences.plist | grep -A1 SSIDString | grep "<string>" | awk -F["<>"] '{print $3}'

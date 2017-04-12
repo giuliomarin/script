@@ -6,6 +6,11 @@
 import os
 import shutil
 
+def orderfolders(folder):
+    alldirs = [os.path.join(folder, d) for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d))]
+    alldirs.sort(key = lambda f: os.path.getmtime(f), reverse = True)
+    return alldirs
+
 def deleteallbutlatestmodified(folder):
     alldirs = [os.path.join(folder, d) for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d))]
 
@@ -25,11 +30,6 @@ def getlatestmodifieddir(folder):
     alldirs = [os.path.join(folder, d) for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d))]
     latestmodifieddir = max(alldirs, key = os.path.getmtime)
     return latestmodifieddir
-
-def orderfolders(folder):
-    alldirs = [os.path.join(folder, d) for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d))]
-    alldirs.sort(key = lambda f: os.path.getmtime(f), reverse = True)
-    return alldirs
 
 if __name__ == '__main__':
 

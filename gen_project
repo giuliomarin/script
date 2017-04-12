@@ -1,6 +1,6 @@
 printf "\n======\nGenerate project for XCode\n======\n\n"
 
-projects=('/GitHub/CommonTools/submodules/Nitrogen' '/GitHub/cvip-cpp' '/GitHub/Fusion')
+projects=('/GitHub/CommonTools/submodules/Nitrogen' '/GitHub/cvip-cpp' '/GitHub/Fusion' '/GitHub/opengl')
 
 i=0
 for p in ${projects[*]}; do
