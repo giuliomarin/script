@@ -12,3 +12,14 @@ spinner()
     done
     printf "    \b\b\b\b"
 }
+
+
+function updateProgress()
+{
+	pdone=$(($1*100/$2))
+	ndone=$(($pdone/2))
+	ntogo=$((50-$ndone))
+	printf '#%.0s' `seq $ndone`
+	printf ' %.0s' `seq $ntogo`
+	printf '(%s%%)\r' $pdone
+}

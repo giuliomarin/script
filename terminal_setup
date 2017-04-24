@@ -1,8 +1,10 @@
 # read bashrc at login
-printf "%s\n" "# read ~/.bashrc at ssh login" "  if [ -f ~/.bashrc ]; then . ~/.bashrc fi" >> ~/.bash_profile
+printf "%s\n" "# read ~/.bashrc at ssh login" "  if [ -f ~/.bashrc ]; then . ~/.bashrc; fi" >> ~/.bash_profile
 
 # Terminal commands
-printf "%s\n" "# Terminal commands" "  alias ll='ls -lG'" "  alias run_biblatex='/GitHub/docker/latex/run_biblatex'" "  alias run_latex='/GitHub/docker/latex/run_latex'" "  bind '\"\e[A\": history-search-backward'" "  bind '\"\e[B\": history-search-forward'" >> ~/.bash_profile
+printf "%s\n" "# Terminal commands" "  alias ll='ls -lG'" "  bind '\"\e[A\": history-search-backward'" "  bind '\"\e[B\": history-search-forward'" >> ~/.bash_profile
+printf "%s\n" "  export GREP_OPTIONS='--color=always'" "  export GREP_COLOR='1;35;40'" >> ~/.bash_profile
+printf "%s\n" "  alias run_biblatex='/GitHub/docker/latex/run_biblatex'" "  alias run_latex='/GitHub/docker/latex/run_latex'" >> ~/.bash_profile
 
 # Git Prompt
 git clone https://github.com/magicmonty/bash-git-prompt.git ~/.bash-git-prompt
