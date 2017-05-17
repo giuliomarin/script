@@ -3,10 +3,13 @@
 import os
 import math
 import sys
+import os
 import subprocess
 from matplotlib import pyplot as plt
 
 def getlog(folder):
+    if not os.path.isdir(folder):
+        return ''
     try:
         p = subprocess.Popen(['git', 'log', '--no-merges', '--author=' + author, '--pretty=format: %aD'],
                              cwd=folder, stdout=subprocess.PIPE)
@@ -15,8 +18,7 @@ def getlog(folder):
         print('Git not installed?')
         sys.exit(-1)
     if entries == '':
-        print('Not a git repository?')
-        sys.exit(-1)
+        print('No entries in %s' % folder)
     print '[%d] %s' % (len(entries.split('\n')), folder)
     return entries
 
@@ -27,13 +29,17 @@ if __name__ == '__main__':
     # git log --pretty=format:"%an" | sort | uniq -c | sort -r
 
     # default values
-    author = ''
     scaley = 1.7
+
+    # author
+    author = ''
+    if len(sys.argv) > 1:
+        author = sys.argv[1]
 
     # list of directories to use to compute statistics
     listdirs = ['.']
-    if len(sys.argv) > 1:
-        listdirs = sys.argv[1:]
+    if len(sys.argv) > 2:
+        listdirs = sys.argv[2:]
 
     # get all the logs
     alllogs = ''
@@ -97,11 +103,11 @@ if __name__ == '__main__':
     plt.xticks(x, hours)
     plt.yticks(y, days)
     ax.tick_params(axis=u'both', which=u'both', length=0)
-    plt.title('Author: %s' % author if len(author) > 0 else '')
     plt.axis('scaled')
     ax.set_xlim([x[0] - 1, x[-1] + 1])
     ax.set_ylim([y[0] - 1, y[-1] + 1])
     for spine in ax.spines.itervalues():
         spine.set_visible(False)
-    plt.savefig('punchcard.png', dpi = 200)
+    author = author if author == '' else ('_' + author)
+    plt.savefig('punchcard%s.png' % author, dpi=300, bbox_inches='tight')
     plt.show()

@@ -24,4 +24,4 @@ printf '%s\n' '# Python path' '  export PYTHONPATH=/GitHub/CommonTools/submodule
 git config --global push.default simple
 
 # Use atom as default editor
-git config --global core.editor "atom --wait"
+git config --global core.editor "vim"
