@@ -1,0 +1,19 @@
+<script>
+function saveTextAsFile()
+{
+	var textToSave = document.getElementsByTagName('html')[0].innerHTML;
+	var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+	var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+
+	var downloadLink = document.createElement("a");
+	downloadLink.download = "results_manual";
+	downloadLink.href = textToSaveAsURL;
+	downloadLink.onclick = destroyClickedElement;
+	downloadLink.style.display = "none";
+	document.body.appendChild(downloadLink);
+
+	downloadLink.click();
+}
+</script>
+
+<div><button onclick="saveTextAsFile()">Save</button></div>
