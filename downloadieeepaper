@@ -1,0 +1,3 @@
+paper=`echo $1 | awk -F/ '{print $NF}'`
+echo "Downloading paper: ${paper}"
+ssh maringiu@login.dei.unipd.it 'wget -q -O - "http://ieeexplore.ieee.org/stampPDF/getPDF.jsp?arnumber='"${paper}"'"' > ${paper}.pdf
