@@ -1,0 +1,16 @@
+if [ $# -ne 6 ]; then
+    echo "$0 x1 y1 x2 y2 x|y val"
+    echo "Example:"
+    echo "$0 0 0 2 2 x 1"
+    exit 1
+fi
+
+if [ $5 = "x" ]; then
+  printf "y="
+  echo "(($3-$6)*$2+($6-$1)*$4)/($3-$1)" | bc -l
+elif [ $5 = "y" ]; then
+  printf "x="
+  echo "(($4-$6)*$1+($6-$2)*$3)/($4-$2)" | bc -l
+else
+  echo "arg5: $5 has to be \"x\" or \"y\""
+fi
