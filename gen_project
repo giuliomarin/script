@@ -1,6 +1,6 @@
 printf "\n======\nGenerate project for XCode\n======\n\n"
 
-projects=('/GitHub/CommonTools/submodules/Nitrogen' '/GitHub/cvip-cpp' '/GitHub/Fusion' '/GitHub/opengl')
+projects=('/Users/giulio/git/CommonTools/submodules/Nitrogen' '/Users/giulio/git/cvip-cpp' '/Users/giulio/git/Fusion' '/Users/giulio/git/opengl')
 
 i=0
 for p in ${projects[*]}; do
@@ -12,7 +12,7 @@ echo ""
 read -p "Type project id: " p
 if [ "$p" == "" ]; then p=0; fi
 
-builddir=/GitHub/build/`echo ${projects[$p]} | awk -F/ '{print $NF}'`
+builddir=/Users/giulio/git/build/`echo ${projects[$p]} | awk -F/ '{print $NF}'`
 echo "Building project: [$p] ${projects[$p]}"
 echo "Builddir: $builddir"
 echo ""
