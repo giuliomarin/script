@@ -1,0 +1,8 @@
+if [ $# = 0 ]; then
+    echo "Usage:"
+    echo "$0 tex_files"
+    echo "Example:"
+    echo "$0 intro.tex"
+    exit 1
+fi
+grep -o '\\\cite{[a-zA-Z0-9\,\-]*}' "$@" | awk -F[{}] '{print $2}' | sed 's/,/ /g' | awk '{for(i=1;i<=NF;i++){print $i}}' | sort | uniq -c | sort -rg
