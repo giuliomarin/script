@@ -1,0 +1,1 @@
+cat ~/file_to_plot | gnuplot -e "set terminal dumb size 150, 40; plot '-' using 1 with lines notitle"
