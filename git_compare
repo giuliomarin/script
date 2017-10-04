@@ -1,0 +1,2 @@
+open https://github.com/Aquifi/Nitrogen/compare/pg...`git branch | grep "*" | awk '{print $2}'`
+# check if it is a git folder

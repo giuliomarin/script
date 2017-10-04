@@ -8,7 +8,7 @@ function saveTextAsFile()
 	var downloadLink = document.createElement("a");
 	downloadLink.download = "results_manual";
 	downloadLink.href = textToSaveAsURL;
-	downloadLink.onclick = destroyClickedElement;
+	downloadLink.onclick = function destroyClickedElement(event){document.body.removeChild(event.target)};
 	downloadLink.style.display = "none";
 	document.body.appendChild(downloadLink);
 

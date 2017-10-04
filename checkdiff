@@ -1,0 +1,6 @@
+if cmp -s "$1" "$2"
+then
+   echo "The files match"
+else
+   echo "The files are different"
+fi

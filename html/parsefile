@@ -1,3 +1,4 @@
+<script>
 function readFile(filePath)
 {
   var rawFile = new XMLHttpRequest();
@@ -12,3 +13,4 @@ function readFile(filePath)
   }
   rawFile.send(null);
 }
+</script>
