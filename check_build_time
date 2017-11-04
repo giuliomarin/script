@@ -1,0 +1,16 @@
+src=~/git/Nitrogen
+build=~/git/NitrogenBuildTest
+
+mkdir -p ${build}
+
+for i in `seq 0 1000`; do
+  cd ${src}
+  git checkout HEAD~${i}
+  git submodule update
+  cd ${build}
+  t0=`date +%s`; make clean; t1=`date +%s`; tclean=$((t1-t0))
+  t0=`date +%s`; cmake ${src} -DCMAKE_BUILD_TYPE=Release; t1=`date +%s`; tmake=$((t1-t0))
+  t0=`date +%s`; make -j8 unittests; t1=`date +%s`; tbuild=$((t1-t0))
+  cd ${src}
+  echo "`git log -1 --pretty=tformat:"%ai | %h | %f | %an | %ae"` | ${tclean} | ${tmake} | ${tbuild}" >> ~/log_build_time
+done

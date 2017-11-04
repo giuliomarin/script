@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+	echo "$0 src.yml dst.yml [lineNum 'string to replace'] [lineNum 'string to replace'] ..." >&2
+	echo "if 'string to replace' starts with spaces, replace spaces with '\ '" >&2
+	exit 1
+fi
+
+cp $1 $2
+for arg in "${@:3}"; do echo "${arg}"; done | paste - - | while read n arg; do sed -i -e "${n}s|.*|${arg}|" $2; done
+echo $2

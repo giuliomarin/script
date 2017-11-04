@@ -1,0 +1,1 @@
+cat runtastic_20170820_1808_Running.gpx  | grep "lon\|lat" | sed 's/.*lon="\([0-9.\-]*\).*lat="\([0-9.\-]*\).*/\1 \2/' | gnuplot -e "set terminal dumb size 150, 40; set size ratio -1; plot '-' using 1:2 with lines notitle"
