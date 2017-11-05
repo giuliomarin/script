@@ -4,9 +4,11 @@
   <title>Images</title>
   <meta charset="utf-8">
   <style>
-    figure {display: inline-block; margin: 2px;}
+    figure {margin: 2px;}
     figcaption {text-align: center}
-    img {}
+    img {margin: auto; display: block;}
+    #progress {width: 90%; background-color: #ddd; ; border-radius: 10px; margin: auto}
+    #bar {width: 0%; height: 20px; border-radius: 10px; background-color: #ccc; text-align: left; line-height: 20px; color: white;}
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
@@ -52,6 +54,7 @@
           var img = document.createElement("img");
           img.src = imgPath;
           var figure = document.createElement("figure")
+          figure.setAttribute("class", "slide")
           var caption = document.createElement("figcaption")
           caption.innerHTML = cropText(imgPath)
           figure.appendChild(caption)
@@ -61,6 +64,9 @@
       }
     }
     rawFile.send(null);
+    slideIndex = 0;
+    clearTimeout(timeout);
+    showSlides();
   }
 
   function setImageSize()
@@ -100,23 +106,70 @@
 <div>
   <button onclick="readFile()">Read</button>
   <input type="text" id="filepath" value="list.txt">
-</div>
-<div>
-  Image width (% page width)
-  <input type="range" min="1" max="100" value="50" class="slider" id="sliderSize">
-</div>
-<div>
+  <br>
   Fields path (split by "/")
   <input type="text" id="namefields" value="">
+  <br>
+  Image width (% page width)
+  <br>
+  <input type="range" min="1" max="100" value="50" style="width: 100%; margin: auto" class="slider" id="sliderSize">
+  <br>
+  Delay (ms):
+  <div id="delay" style=" display: inline-block; width: 30px"></div>
+  <br>
+  <input type="range" min="1" max="1000" value="500" style="width: 100%;" class="slider" id="sliderDelay">
+</div>
+<div id="progress">
+  <div id="bar"></div>
 </div>
 <br>
 
 <script>
   setImageSize();
-  var slider = document.getElementById("sliderSize")
-  slider.oninput = function() {
+  document.getElementById("sliderSize").oninput = function() {
     setImageSize();
   }
+  document.getElementById("sliderDelay").oninput = function() {
+    document.getElementById("delay").innerHTML = this.value;
+  }
+  document.getElementById("delay").innerHTML = document.getElementById("sliderDelay").value;
+</script>
+
+<script>
+var slideIndex = 0;
+var timeout;
+function showSlides() {
+    var i;
+    var slides = document.getElementsByClassName("slide");
+    // var dots = document.getElementsByClassName("dot");
+    for (i = 0; i < slides.length; i++) {
+       slides[i].style.display = "none";
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {slideIndex = 1}
+    // for (i = 0; i < dots.length; i++) {
+    //     dots[i].className = dots[i].className.replace(" active", "");
+    // }
+    slides[slideIndex-1].style.display = "block";
+    // dots[slideIndex-1].className += " active";
+    move();
+    timeout = setTimeout(showSlides, document.getElementById("sliderDelay").value);
+}
+
+var width = 0;
+function move() {
+  var elem = document.getElementById("bar");
+  width++;
+  var num = document.getElementsByClassName("slide").length;
+  if (width > num)
+  {
+    width = 1;
+  }
+  var perc = width * 98 / num;
+  elem.style.width = perc + '%';
+  elem.style.paddingLeft = '2%';
+  elem.innerHTML = Math.round(perc) + '%';
+}
 </script>
 
 </body>
