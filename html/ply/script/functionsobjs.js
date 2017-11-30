@@ -1,23 +1,12 @@
 // Set up the scene, camera, and renderer as global variables.
-var scene = [], renderers = [], controls = [];
-var stats;
-var divId = 1, pageId = 1;
+var scene = [], renderers = [], controls = []; cameras = [];
+var divId = 1;
 var bgcol = 0;
-
-function onResizeWin()
-{
-  var WIDTH = $("#obj1").width(), HEIGHT = $("#obj1").height();
-  for (i = 0; i < renderers.length; i++) {
-    renderers[i].setSize(WIDTH, HEIGHT);
-  }
-  camera.aspect = WIDTH / HEIGHT;
-  camera.updateProjectionMatrix();
-}
 
 function addAdditionalButtons()
 {
   var body = document.getElementsByTagName("body")[0]
-  var button = document. createElement("button");
+  var button = document.createElement("button");
   button.innerHTML = "Background color";
   button.id = "bgcolor"
   button.addEventListener("click", function()
@@ -48,34 +37,23 @@ function addAdditionalButtons()
   body.appendChild(button);
 }
 
-function addPages(numPages)
+var onProgress = function ( xhr )
 {
-  if (typeof(numPages) === 'undefined') numPages = 1;
-  pages = document.getElementById( "pages" );
-  for (i = 0; i < numPages; i++)
-  {
-    var a = document.createElement('a');
-    // a.href = "javascript:getobj" + pageId + "()";
-    a.href = "page" + pageId + ".html";
-
-    var button = document. createElement("button");
-    button.innerHTML = "Page " + pageId;
-    button.className = "button"
-    button.id = "button" + pageId
-
-    // 2. Append somewhere.
-    a.appendChild(button);
-
-    pages.appendChild(a);
-    pageId += 1
+  if ( xhr.lengthComputable ) {
+    var percentComplete = xhr.loaded / xhr.total * 100;
+    console.log( "[" + Math.round(percentComplete, 2) + "%] " + xhr.currentTarget.responseURL );
   }
-}
+};
+
+var onError = function ( xhr )
+{
+  console.log("Error downloading %s", xhr.currentTarget.responseURL)
+};
 
 // Create new obj
-function newObj(resultsPath, objName)
+function newObj(filepath)
 {
-
-  grid = document.getElementById( "gridobj" );
+  grid = document.getElementById("gridobj");
 
   // Now create and append to iDiv
   var containerCurr = document.createElement("div");
@@ -91,6 +69,9 @@ function newObj(resultsPath, objName)
 
   // Create the scene and set the scene size.
   var sceneCurr = new THREE.Scene();
+  // Create the camera.
+  // camera = new THREE.PerspectiveCamera(45, 1, 0.01, 3); camera.position.set(0,0,-0.5);
+  var camera = new THREE.PerspectiveCamera(45, 1, 10, 3000);
   sceneCurr.add(camera);
 
   // Create an event listener that resizes the renderer with the browser window.
@@ -98,66 +79,55 @@ function newObj(resultsPath, objName)
 
 
   // Create a light, set its position, and add it to the scene.
-  var light = new THREE.AmbientLight( 0xF2F2F2 ); // soft white light
-  sceneCurr.add( light );
+  // var light = new THREE.AmbientLight( 0xF2F2F2 ); // soft white light
+  // sceneCurr.add( light );
 
-  var texture = new THREE.Texture();
-  var manager = new THREE.LoadingManager();
-
-  var onProgress = function ( xhr )
-  {
-    if ( xhr.lengthComputable ) {
-      var percentComplete = xhr.loaded / xhr.total * 100;
-      console.log( "[" + Math.round(percentComplete, 2) + "%] " + xhr.currentTarget.responseURL );
-    }
-  };
-
-  var onError = function ( xhr )
-  {
-    console.log("Error downloading %s", xhr.currentTarget.responseURL)
-  };
-
-  var loader = new THREE.ImageLoader( manager );
-  loader.load( resultsPath + "/" + objName + "/mesh/mesh.png", function ( image )
-  {
-    texture.image = image;
-    texture.needsUpdate = true;
-  } );
-
-  // model
-  var loader = new THREE.OBJLoader( manager );
-  loader.load( resultsPath + "/" + objName + "/mesh/mesh.obj", function ( object )
-  {
-
-    object.traverse( function ( child )
-    {
-      if ( child instanceof THREE.Mesh )
-      {
-        // Center object
-        child.geometry.computeBoundingBox();
-        var centerX = 0.5 * ( child.geometry.boundingBox.max.x + child.geometry.boundingBox.min.x );
-        var centerY = 0.5 * ( child.geometry.boundingBox.max.y + child.geometry.boundingBox.min.y );
-        var centerZ = 0.5 * ( child.geometry.boundingBox.max.z + child.geometry.boundingBox.min.z );
-        object.translateX( -centerX );
-        object.translateY( -centerY );
-        object.translateZ( -centerZ );
-
-        // Apply texture
-        child.material.map = texture;
-      }
-
-    } );
-
-    sceneCurr.add( object );
-
-  }, onProgress, onError );
+  var loader = new THREE.PLYLoader();
+  loader.load( filepath, function ( geometry ) {
+    // geometry.rotateZ(3.14)
+    geometry.computeBoundingBox();
+    var centerX = 0.5 * ( geometry.boundingBox.max.x + geometry.boundingBox.min.x );
+    var centerY = 0.5 * ( geometry.boundingBox.max.y + geometry.boundingBox.min.y );
+    var centerZ = 0.5 * ( geometry.boundingBox.max.z + geometry.boundingBox.min.z );
+    geometry.translate(-centerX, -centerY, -centerZ)
+    console.log(centerX, centerY, centerZ)
+    var bBoxX = geometry.boundingBox.max.x - geometry.boundingBox.min.x
+    var bBoxY = geometry.boundingBox.max.y - geometry.boundingBox.min.y
+    var bBoxZ = geometry.boundingBox.max.z - geometry.boundingBox.min.z
+    var translationZ = Math.max(bBoxX, bBoxY) / (2 * Math.tan(camera.fov/180.0*Math.PI/2))
+    camera.translateZ(-(translationZ + bBoxZ/2))
+    var material = new THREE.PointCloudMaterial({
+                size: 2,
+                transparent: false,
+                opacity: 1.0,
+                vertexColors: true,
+                sizeAttenuation: false
+                // color: 0xffffff
+            });
+    var cloud = new THREE.PointCloud(geometry, material);
+					sceneCurr.add( cloud );
+				}, onProgress, onError );
 
   requestRender();
 
   // Add OrbitControls so that we can pan around with the mouse.
-  controlCurr = new THREE.OrbitControls(camera, rendererCurr.domElement);
+  var controlCurr = new THREE.OrbitControls(camera, rendererCurr.domElement);
 
-  return [sceneCurr, rendererCurr, controlCurr];
+  scene.push(sceneCurr);
+  renderers.push(rendererCurr);
+  controls.push(controlCurr);
+  cameras.push(camera);
+  render()
+}
+
+function onResizeWin()
+{
+  var WIDTH = $("#obj1").width(), HEIGHT = $("#obj1").height();
+  for (i = 0; i < renderers.length; i++) {
+    renderers[i].setSize(WIDTH, HEIGHT);
+    cameras[i].aspect = WIDTH / HEIGHT;
+    cameras[i].updateProjectionMatrix();
+  }
 }
 
 //! mouse move event
@@ -175,15 +145,12 @@ function onMouseWheel( event )
 // Renders the scene and updates the render as needed.
 function animate()
 {
+  // var i = 0
   for (i = 0; i < controls.length; i++)
   {
     controls[i].update();
-    // Render the scene.
-    renderers[i].render(scene[i], camera);
+    renderers[i].render(scene[i], cameras[i]);
   }
-
-  // Stats
-  stats.update();
 }
 
 //! Call this function when something has changed
