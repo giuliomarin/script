@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Images and labels</title>
+  <meta charset="utf-8">
+  <style>
+    figure {display: inline-block; margin: 2px;}
+    figcaption {text-align: center}
+    img {}
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script>
+  function readFile()
+  {
+    // File needs to have comma separated entries in the form: img_path,label(0, 1, 2, ...)
+    // For example:
+    // img_path_1,label1
+    // img_path_2,label2
+    // ...
+
+    // Delete images if available
+    var images = document.getElementById("images");
+    if (images) {
+      images.remove()
+    }
+
+    // Get filepath
+    var filePath = document.getElementById("filepath").value;
+    if (filePath.length == 0)
+      return;
+
+    // Read file and add images
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", filePath, false);
+    rawFile.overrideMimeType("text/plain");
+    rawFile.onreadystatechange = function ()
+    {
+      if(rawFile.readyState == 4 && (rawFile.status == 200 || rawFile.status == 0))
+      {
+        // Read file and split lines
+        var allText = rawFile.responseText;
+        var textSplit = allText.split(/\r?\n/)
+        // console.log(textSplit)
+
+        // Recreate images
+        var images = document.createElement('div')
+        images.setAttribute("id", "images");
+        document.body.appendChild(images);
+
+        // Append images
+        for (var imgId in textSplit) {
+          imgPathLabel = textSplit[imgId].split(',')
+          imgPath = imgPathLabel[0]
+          imgLabel = imgPathLabel[1]
+          if (imgPath.length == 0)
+          {
+            continue;
+          }
+          var img = document.createElement("img");
+          img.src = imgPath;
+          img.className = imgPath
+          img.onclick = function() { imgClick(this.className); };
+          img.setAttribute("label", imgLabel)
+          img.style = "border: 4px solid white"
+          var figure = document.createElement("figure")
+          var caption = document.createElement("figcaption")
+          caption.innerHTML = cropText(imgPath)
+          figure.appendChild(caption)
+          figure.appendChild(img)
+          images.appendChild(figure);
+        }
+      }
+    }
+    rawFile.send(null);
+    draw()
+  }
+
+  function setImageSize()
+  {
+    var slider = document.getElementById("sliderSize")
+    var rules = document.styleSheets[0].cssRules
+    for (var ruleId in rules) {
+
+      if (rules[ruleId].selectorText == "img") {
+        rules[ruleId].style.width = $(window).width() * slider.value / 100 + "px"
+        // console.log(rules[ruleId].style.height);
+      }
+    }
+  }
+
+  function cropText(txt)
+  {
+    var fields = document.getElementById("namefields").value.split(',')
+    if (fields[0].length == 0)
+    {
+      return txt;
+    }
+    txtSplit = txt.split('/')
+    var out = ""
+    for (var i in fields)
+    {
+      if (out.length > 0)
+      {
+        out += "-";
+      }
+      out += txtSplit[fields[i]]
+    }
+    return out
+  }
+
+  function draw()
+  {
+    var imgs = document.getElementsByTagName('img');
+    for (var i = 0; i < imgs.length; ++i)
+    {
+      var img = imgs[i];
+      var label = img.getAttribute("label").split(',')
+      var val = parseInt(label[0])
+      img.style.borderColor = colorLabels[val];
+    }
+  }
+
+  function imgClick(id)
+  {
+    // update label
+    var imgs = document.getElementsByClassName(id)
+    console.log(id);
+    var label = imgs[0].getAttribute("label").split(',')
+    label[0] = parseInt(label[0]) + 1
+    if (label[0] >= colorLabels.length)
+      label[0] = 0
+
+    // save values on all the images
+    for (var i = 0; i < imgs.length; ++i)
+    {
+      imgs[i].setAttribute("label", label)
+    }
+    draw()
+  }
+
+  function saveTextAsFile()
+  {
+    var filename = document.getElementById("filepath").value.split('.')[0].replace(/\//g, '-') + '_manual'
+    var textToSave = ""
+    var imgs = document.getElementsByTagName('img');
+    for (var i = 0; i < imgs.length; ++i)
+    {
+      textToSave = textToSave + imgs[i].className + ',' + imgs[i].getAttribute("label") + "\n"
+    }
+
+    // Save results
+    var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+    var downloadLink = document.createElement("a");
+    downloadLink.download = filename + ".txt";
+    downloadLink.href = textToSaveAsURL;
+    downloadLink.onclick = function destroyClickedElement(event){document.body.removeChild(event.target)};
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+  </script>
+</head>
+<body>
+<div>
+  <button onclick="readFile()">Read</button>
+  <input type="text" id="filepath" value="list.txt">
+</div>
+<div>
+  Image width (% page width)
+  <input type="range" min="1" max="100" value="50" style="width: 50%; margin: auto" class="slider" id="sliderSize">
+</div>
+<div>
+  Fields path (split by "/")
+  <input type="text" id="namefields" value="">
+</div>
+<br>
+
+<script>
+  var colorLabels = ["green", "red"] // This determines the number of classes
+  setImageSize();
+  var slider = document.getElementById("sliderSize")
+  slider.oninput = function() {
+    setImageSize();
+  }
+</script>
+
+<div><button onclick="saveTextAsFile()">Save</button></div>
+</body>
+</html>
