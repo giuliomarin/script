@@ -34,5 +34,7 @@ def getlatestmodifieddir(folder):
 if __name__ == '__main__':
 
     # iOS DeviceSupport
-    deleteallbutlatestmodified('/Users/giulio/Library/Developer/Xcode/iOS DeviceSupport')
+    deleteallbutlatestmodified(os.path.expanduser('~/Library/Developer/Xcode/iOS DeviceSupport'))
+    deleteallbutlatestmodified(os.path.expanduser('~/Library/Developer/Xcode/watchOS DeviceSupport'))
+    #deleteallbutlatestmodified(os.path.expanduser('~/Library/Developer/Xcode/iOS Device Logs'))
 

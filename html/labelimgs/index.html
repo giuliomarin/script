@@ -12,8 +12,9 @@
   <script>
   function readFile()
   {
-    // File needs to have comma separated entries in the form: img_path,label(0, 1, 2, ...)
-    // For example:
+    // File needs to have comma separated entries in the form: img_path,label(0, 1, 2, ...).
+    // If no label is provided, label 0 is assigned
+    // Example:
     // img_path_1,label1
     // img_path_2,label2
     // ...
@@ -51,7 +52,14 @@
         for (var imgId in textSplit) {
           imgPathLabel = textSplit[imgId].split(',')
           imgPath = imgPathLabel[0]
-          imgLabel = imgPathLabel[1]
+          if (imgPathLabel.length > 1)
+          {
+            imgLabel = imgPathLabel[1]
+          }
+          else
+          {
+            imgLabel = 0
+          }
           if (imgPath.length == 0)
           {
             continue;
@@ -164,7 +172,7 @@
 <body>
 <div>
   <button onclick="readFile()">Read</button>
-  <input type="text" id="filepath" value="list.txt">
+  <input type="text" id="filepath" value="">
 </div>
 <div>
   Image width (% page width)

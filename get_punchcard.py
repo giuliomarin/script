@@ -7,6 +7,8 @@ import subprocess
 from matplotlib import pyplot as plt
 
 def getlog(folder):
+    if not os.path.isdir(folder):
+        return ''
     try:
         p = subprocess.Popen(['git', 'log', '--no-merges', '--author=' + author, '--pretty=format: %aD'],
                              cwd=folder, stdout=subprocess.PIPE)
@@ -27,8 +29,12 @@ if __name__ == '__main__':
     # git log --pretty=format:"%an" | sort | uniq -c | sort -r
 
     # default values
-    author = ''
     scaley = 1.7
+
+    # author
+    author = ''
+    if len(sys.argv) > 1:
+        author = sys.argv[1]
 
     # list of directories to use to compute statistics
     listdirs = ['.']

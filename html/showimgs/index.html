@@ -10,10 +10,15 @@
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
-<body style="margin: 0;">
+<body>
   <script>
   function readFile()
   {
+    // File needs to have list of images, for example:
+    // img_path_1
+    // img_path_2
+    // ...
+
     // Delete images if available
     var images = document.getElementById("images");
     if (images) {
@@ -104,7 +109,7 @@
 </div>
 <div>
   Image width (% page width)
-  <input type="range" min="1" max="100" value="50" class="slider" id="sliderSize">
+  <input type="range" min="1" max="100" value="50" style="width: 50%; margin: auto" class="slider" id="sliderSize">
 </div>
 <div>
   Fields path (split by "/")

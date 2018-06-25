@@ -14,7 +14,30 @@
   <script>addAdditionalButtons();</script>
 <div id="gridobj"></div>
   <script>
-    newObj("/Users/giulio/git/build/Nitrogen/bin/Debug/bundleinspectionoutput/output/2017_11_06_19_43_40f/undefined/bundleFrames/pcl/aqpointcloud.ply")
+  function readFile(filePath)
+  {
+    var allText = "";
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", filePath, false);
+    rawFile.overrideMimeType("text/plain");
+    rawFile.onreadystatechange = function ()
+    {
+      if(rawFile.readyState == 4 && (rawFile.status == 200 || rawFile.status == 0))
+      {
+        allText = rawFile.responseText;
+        console.log(allText)
+      }
+    }
+    rawFile.send(null);
+    return allText.trim().split("\n");
+  }
+
+    var videolist = readFile("/Users/giulio/Desktop/list")
+    console.log(videolist)
+    for (var id in videolist)
+    {
+      newObj(videolist[id])
+    }
   </script>
 
 </body>

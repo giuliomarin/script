@@ -53,9 +53,7 @@ if [ $# != 2 ];then
 fi
 
 # Check whether dst path exist.
-if [ ! -d "$DST_PATH" ];then
-    mkdir -p "$DST_PATH"
-fi
+mkdir -p "$DST_PATH"
 
 # Generate, refer to: https://developer.apple.com/library/ios/qa/qa1686/_index.html
 info 'Generate iTunesArtwork.png'

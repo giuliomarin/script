@@ -83,8 +83,12 @@ function newObj(filepath)
   // sceneCurr.add( light );
 
   var loader = new THREE.PLYLoader();
+  console.log(filepath)
   loader.load( filepath, function ( geometry ) {
-    // geometry.rotateZ(3.14)
+    geometry.rotateZ(3.14)
+    geometry.rotateX(-3.14/2)
+    geometry.rotateY(3.14/2)
+    geometry.rotateX(-3.14/4)
     geometry.computeBoundingBox();
     var centerX = 0.5 * ( geometry.boundingBox.max.x + geometry.boundingBox.min.x );
     var centerY = 0.5 * ( geometry.boundingBox.max.y + geometry.boundingBox.min.y );
@@ -97,7 +101,7 @@ function newObj(filepath)
     var translationZ = Math.max(bBoxX, bBoxY) / (2 * Math.tan(camera.fov/180.0*Math.PI/2))
     camera.translateZ(-(translationZ + bBoxZ/2))
     var material = new THREE.PointCloudMaterial({
-                size: 2,
+                size: 1,
                 transparent: false,
                 opacity: 1.0,
                 vertexColors: true,
