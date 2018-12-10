@@ -1,0 +1,56 @@
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <!-- <script src="./plotly,js"></script> -->
+</head>
+
+<body>
+  <div id="div1" style="width:100%;height:100%;"></div>
+  <script>
+  const filename = '/Users/giulio/Downloads/tables/seq1/distance_RANSAC250.csv'
+  var i = 0
+  function plot()
+  {
+    i = i + 1
+    console.log(i)
+    Plotly.d3.csv(filename + '?' + i, function(err, dataCSV) {
+      var x = [], y1 = [], y2 = []
+      dataCSV.forEach(function(p) {
+        x.push(+p['planeId']);
+        y1.push(+p['angle']);
+        y2.push(+p['distance']);
+      });
+
+      var data = [
+        // {
+        //   type: 'scatter',
+        //   x: x,
+        //   y: y1,
+        //   name: 'angle'
+        // },
+        {
+          type: 'scatter',
+          x: x,
+          y: y2,
+          name: 'distance'
+        }
+      ];
+
+      var layout = {
+        title: "",
+        yaxis: {
+        title: "Distance [mm]",
+        // rangemode: 'tozero',
+        showline: true,
+        zeroline: true},
+        xaxis: {
+          title: "Frame Id"
+        }
+      };
+
+      Plotly.newPlot('div1', data, layout);
+    })
+  }
+  plot()
+  // setInterval(plot, 5000);
+  </script>
+</body>
