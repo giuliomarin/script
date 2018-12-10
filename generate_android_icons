@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -e
+
+SRC_FILE="$1"
+DST_PATH="$2"
+
+info() {
+     local green="\033[1;32m"
+     local normal="\033[0m"
+     echo -e "[${green}INFO${normal}] $1"
+}
+
+error() {
+     local red="\033[1;31m"
+     local normal="\033[0m"
+     echo -e "[${red}ERROR${normal}] $1"
+}
+
+usage() {
+cat << EOF
+USAGE:
+    $0 srcfile dstpath
+
+EXAMPLE:
+    $0 img.png ~/icons
+
+DESCRIPTION:
+    This script generates ios app icons.
+
+    srcfile - The source png image.
+    dstpath - The destination path where the icons will be saved.
+
+    This script is depend on ImageMagick. So you must install ImageMagick first
+    You can use 'brew install imagemagick' to install it
+
+AUTHOR:
+    giulio.marin@me.com>
+EOF
+}
+
+###########
+# Main
+###########
+
+# Check imagemagick
+command -v convert >/dev/null 2>&1 || { error >&2 "ImageMagick is not installed. Please install it first."; exit -1; }
+
+# Check param
+if [ $# != 2 ];then
+    usage
+    exit -1
+fi
+
+# Check whether dst path exist.
+mkdir -p "$DST_PATH"
+
+# Generate, refer to: https://developer.android.com/guide/practices/ui_guidelines/icon_design
+info 'Generate hdpi'
+CURR_PATH=$DST_PATH/mipmap-hdpi
+mkdir -p $CURR_PATH
+convert "$SRC_FILE" -resize 72x72 "$CURR_PATH/ic_launcher.png"
+info 'Generate mdpi'
+CURR_PATH=$DST_PATH/mipmap-mdpi
+mkdir -p $CURR_PATH
+convert "$SRC_FILE" -resize 48x48 "$CURR_PATH/ic_launcher.png"
+info 'Generate xhdpi'
+CURR_PATH=$DST_PATH/mipmap-xhdpi
+mkdir -p $CURR_PATH
+convert "$SRC_FILE" -resize 96x96 "$CURR_PATH/ic_launcher.png"
+info 'Generate xxhdpi'
+CURR_PATH=$DST_PATH/mipmap-xxhdpi
+mkdir -p $CURR_PATH
+convert "$SRC_FILE" -resize 144x144 "$CURR_PATH/ic_launcher.png"
+
+info 'Generate Done.'
