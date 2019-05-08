@@ -10,8 +10,8 @@ def getlog(folder):
     if not os.path.isdir(folder):
         return ''
     try:
-        p = subprocess.Popen(['git', 'log', '--no-merges', '--author=' + author, '--pretty=format: %aD'],
-                             cwd=folder, stdout=subprocess.PIPE)
+        p = subprocess.Popen('git log --no-merges --author="' + author + '" --pretty=format:"%aD"',
+                             cwd=folder, stdout=subprocess.PIPE, shell=True)
         entries, _ = p.communicate()
     except OSError:
         print('Git not installed?')
@@ -38,8 +38,8 @@ if __name__ == '__main__':
 
     # list of directories to use to compute statistics
     listdirs = ['.']
-    if len(sys.argv) > 1:
-        listdirs = sys.argv[1:]
+    # if len(sys.argv) > 1:
+    #     listdirs = sys.argv[1:]
 
     # get all the logs
     alllogs = ''
