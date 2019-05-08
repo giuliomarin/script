@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Images</title>
+  <meta charset="utf-8">
+  <svg style="position: absolute; height: 0; width: 0">
+    <filter id="red" color-interpolation-filters="sRGB" x="0" y="0" height="100%" width="100%">
+      <feColorMatrix type="matrix"
+      values="1 0 0 0 0
+      0 0 0 0 0
+      0 0 0 0 0
+      0 0 0 1 0"/>
+    </filter>
+    <filter id="blue" color-interpolation-filters="sRGB" x="0" y="0" height="100%" width="100%">
+      <feColorMatrix type="matrix"
+      values="0 0 0 0 0
+      0 0 0 0 0
+      1 0 0 0 0
+      0 0 0 1 0"/>
+    </filter>
+  </svg>
+  <style>
+  label {display: block}
+  label div {width:15%; display: inline-block}
+  figure {display: inline-block; margin: 2px;}
+  figure div {
+    position: relative;
+    display: inline;
+  }
+  figcaption {text-align: center}
+  img {}
+  html {--slide: 50}
+  /* .img1 {-webkit-filter: grayscale(100%);-webkit-filter: url(#red);} */
+  /* .img2 {-webkit-filter: grayscale(100%);-webkit-filter: url(#blue);} */
+  .img1 {-webkit-mask-image: linear-gradient(to right, transparent calc(0+(var(--slide))*1%), black calc((var(--slide))*1%));}
+  .img2 {-webkit-mask-image: linear-gradient(to left, transparent calc((100 - var(--slide))*1%), black calc((100 - var(--slide))*1%));}
+  .img2 {position: absolute; bottom: 4px; right: 0}
+  #slider {position: fixed; top: 0.5em; width: 100%; background: white; z-index: 2}
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+  <script>
+  function readFile()
+  {
+    // File needs to have list of images, for example:
+    // img_path_1
+    // img_path_2
+    // ...
+
+    // Delete images if available
+    var images = document.getElementById("images");
+    if (images) {
+      images.remove()
+    }
+
+    // Get filepath
+    var filePath = document.getElementById("filepath").value;
+    if (filePath.length == 0)
+    return;
+
+    // Read file and add images
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", filePath, false);
+    rawFile.overrideMimeType("text/plain");
+    rawFile.onreadystatechange = function ()
+    {
+      if(rawFile.readyState == 4 && (rawFile.status == 200 || rawFile.status == 0))
+      {
+        // Read file and split lines
+        var allText = rawFile.responseText;
+        var textSplit = allText.split(/\r?\n/)
+        // console.log(textSplit)
+
+        // Recreate images
+        var images = document.createElement('div')
+        images.setAttribute("id", "images");
+        document.body.appendChild(images);
+
+        // Append images
+        for (var imgId in textSplit) {
+          imgsPath = textSplit[imgId].split(",")
+          if (imgsPath[0].length == 0 || imgsPath[1].length == 0)
+          {
+            continue;
+          }
+          var div = document.createElement("div");
+          var img = document.createElement("img");
+          var img2 = document.createElement("img");
+          img.src = imgsPath[0];
+          img.className = "img1";
+          img2.src = imgsPath[1];
+          img2.className = "img2";
+          var figure = document.createElement("figure")
+          var caption = document.createElement("figcaption")
+          caption.innerHTML = cropText(imgsPath[0]) + "<br />" + cropText(imgsPath[1])
+          figure.appendChild(caption)
+          div.appendChild(img)
+          div.appendChild(img2)
+          figure.appendChild(div)
+          images.appendChild(figure);
+        }
+      }
+    }
+    rawFile.send(null);
+  }
+
+  function setImageSize()
+  {
+    var slider = document.getElementById("sliderSize")
+    var opacity = document.getElementById("sliderOpacity")
+    var rules = document.styleSheets[0].cssRules
+    for (var ruleId in rules) {
+      console.log(rules[ruleId])
+      if (rules[ruleId].selectorText == "img") {
+        rules[ruleId].style.width = $(window).width() * slider.value / 100 + "px"
+        // rules[ruleId].style.opacity = 1.0 - (opacity.value / 100.0)
+      }
+      if (rules[ruleId].selectorText == ".img2") {
+        // rules[ruleId].style.opacity = opacity.value / 100.0
+      }
+      if (rules[ruleId].selectorText == "html") {
+        rules[ruleId].style.setProperty('--slide', opacity.value)
+      }
+    }
+  }
+
+  function cropText(txt)
+  {
+    var fields = document.getElementById("namefields").value.split(',')
+    if (fields[0].length == 0)
+    {
+      return txt;
+    }
+    txtSplit = txt.split('/')
+    var out = ""
+    for (var i in fields)
+    {
+      if (out.length > 0)
+      {
+        out += "-";
+      }
+      out += txtSplit[fields[i]]
+    }
+    return out
+  }
+  </script>
+
+  <div id="slider">
+    <label>
+      <div>Image width</div>
+      <input type="range" min="1" max="100" value="50" style="width: 50%; margin: auto" class="slider" id="sliderSize">
+    </label>
+    <label>
+      <div>Image opacity</div>
+      <input type="range" min="1" max="100" value="50" style="width: 50%; margin: auto" class="slider" id="sliderOpacity">
+    </label>
+  </div>
+  <div style="margin-top: 3.5em">
+    <button onclick="readFile()">Read</button>
+    <input type="text" id="filepath" value="/Users/giulio/Desktop/list_img">
+  </div>
+  <div>
+    Fields path (split by "/")
+    <input type="text" id="namefields" value="">
+  </div>
+  <br>
+
+  <script>
+  setImageSize();
+  document.getElementById("sliderSize").oninput = function() {setImageSize();}
+  document.getElementById("sliderOpacity").oninput = function() {setImageSize();}
+</script>
+
+</body>
+</html>
