@@ -1,0 +1,170 @@
+<head>
+  <title>Dimensioner RegTest</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+  <div>
+    File 1
+    <input style="width: 50%" type="text" id="filepath1" value="/data/8_sizing/topdown/out/result_master.csv">
+  </div>
+  <div>
+    File 2
+    <input style="width: 50%" type="text" id="filepath2" value="/data/8_sizing/topdown/out/color/result.csv">
+  </div>
+  <div>
+    RegExp Tag
+    <input type="text" id="regex" value="">
+  </div>
+  <div>
+    Min error to show
+    <input type="text" id="minErr" value="0">
+  </div>
+  <button onclick="plot()">Plot</button>
+  <div id="div0" style="width:100%;height:50%;"></div>
+  <div id="div1" style="width:100%;height:50%;"></div>
+  <div id="div2" style="width:100%;height:50%;"></div>
+  <div id="div3" style="width:100%;height:50%;"></div>
+  <h2>All</h2><div id="list1"></div>
+  <h2>Error2 < Error 1</h2><div id="list2"></div>
+  <h2>Error1 < Error2</h2><div id="list3"></div>
+  <script>
+    function plot()
+    {
+      // Reset plots
+      document.getElementById("div1").innerHTML = ""
+      document.getElementById("div2").innerHTML = ""
+      document.getElementById("div3").innerHTML = ""
+
+      // Parse files (avoid reading from cache)
+      var timestamp = +new Date
+      var filepath1 = document.getElementById("filepath1").value + "?t=" + timestamp;
+      var filepath2 = document.getElementById("filepath2").value + "?t=" + timestamp;
+      var matcher = new RegExp(document.getElementById("regex").value, "g");
+      var a = {y: [], l: []};
+      var b = {y: [], l: []};
+      const minErr = +document.getElementById("minErr").value
+      Plotly.d3.csv(filepath1, function(err, dataCSV) {
+        dataCSV.forEach(function(p) {
+          if (matcher.test(p['tag'])) {
+            a['l'].push(p['seq'] + "-" + p['frame']);
+            a['y'].push(+p['maxAbsErr']);
+          }
+        });
+
+        var j = 0;
+        Plotly.d3.csv(filepath2, function(err, dataCSV) {
+          dataCSV.forEach(function(p) {
+            if (matcher.test(p['tag'])) {
+              b['l'].push(p['seq'] + "-" + p['frame']);
+              b['y'].push(+p['maxAbsErr']);
+              if (a['l'][j] != b['l'][j]) {
+                alert("The two files don't have the same sequences at line " + j + " (" + a['l'][j] + " " + b['l'][j] + ")")
+                throw {};
+              }
+              j = j+1
+            }
+          });
+
+          // Show histogram of error
+          var datahist = [
+          { type: 'histogram', x: a['y'], xbins: {size: 1}, opacity: 0.5, name: 'file1' },
+          { type: 'histogram', x: b['y'], xbins: {size: 1}, opacity: 0.5, name: 'file2' }
+          ];
+          var layouthist = {
+            title: "Histogram of max error",
+            xaxis: { title: "max error (L,W,H) [mm]" },
+            yaxis: { title: "num sequences"},
+            margin: { l: 50, r: 50, b: 50, t: 50 },
+            barmode: "overlay"
+          };
+          Plotly.newPlot('div0', datahist, layouthist);
+
+          // Sort by first y (assumes files are already sorted)
+          var idx = a['y'].map(function(o, i) {return {idx: i, y: o}; }).sort(function(e1, e2) {
+            return e1.y - e2.y;
+          });
+          var y1 = [], y2 = [], l1 = [], l2 = [], txt = "";
+          var layout = {
+            xaxis: { title: "sequence ID" },
+            yaxis: { title: "max error (L,W,H) [mm]"},
+            margin: { l: 50, r: 50, b: 50, t: 50 }
+          };
+          var data = [
+          {
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'file1'
+          },
+          {
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'file2'
+          }
+          ];
+
+          // Plot All
+          for(var i = 0; i < idx.length; i++){
+            if (a['y'][idx[i].idx] >= minErr || b['y'][idx[i].idx] >= minErr) {
+              y1.push(a['y'][idx[i].idx])
+              y2.push(b['y'][idx[i].idx])
+              l1.push(a['l'][idx[i].idx])
+              l2.push(b['l'][idx[i].idx])
+              txt += a['l'][idx[i].idx] + "<br />"
+            }
+          }
+          document.getElementById("list1").innerHTML = txt
+          if (y1.length > 0) {
+            data[0]['text'] = l1
+            data[0]['y'] = y1
+            data[1]['text'] = l2
+            data[1]['y'] = y2
+            layout['title'] = "All (" + y1.length + ")"
+            Plotly.newPlot('div1', data, layout);
+          }
+
+          // Plot only error 2 smaller than 1
+          y1 = [], y2 = [], l1 = [], l2 = [], txt = "";
+          for(var i = 0; i < idx.length; i++){
+            if ((a['y'][idx[i].idx] >= minErr || b['y'][idx[i].idx] >= minErr) && b['y'][idx[i].idx] < a['y'][idx[i].idx]) {
+              y1.push(a['y'][idx[i].idx])
+              y2.push(b['y'][idx[i].idx])
+              l1.push(a['l'][idx[i].idx])
+              l2.push(b['l'][idx[i].idx])
+              txt += a['l'][idx[i].idx] + "<br />"
+            }
+          }
+          document.getElementById("list2").innerHTML = txt
+          if (y1.length > 0) {
+            data[0]['text'] = l1
+            data[0]['y'] = y1
+            data[1]['text'] = l2
+            data[1]['y'] = y2
+            layout['title'] = "Error 2  < Error 1 (" + y1.length + ")"
+            Plotly.newPlot('div2', data, layout);
+          }
+
+          // Plot only error 1 smaller than 2
+          y1 = [], y2 = [], l1 = [], l2 = [], txt = "";
+          for(var i = 0; i < idx.length; i++){
+            if ((a['y'][idx[i].idx] >= minErr || b['y'][idx[i].idx] >= minErr) && b['y'][idx[i].idx] > a['y'][idx[i].idx]) {
+              y1.push(a['y'][idx[i].idx])
+              y2.push(b['y'][idx[i].idx])
+              l1.push(a['l'][idx[i].idx])
+              l2.push(b['l'][idx[i].idx])
+              txt += a['l'][idx[i].idx] + "<br />"
+            }
+          }
+          document.getElementById("list3").innerHTML = txt
+          if (y1.length > 0) {
+            data[0]['text'] = l1
+            data[0]['y'] = y1
+            data[1]['text'] = l2
+            data[1]['y'] = y2
+            layout['title'] = "Error 1  < Error 2 (" + y1.length + ")"
+            Plotly.newPlot('div3', data, layout);
+          }
+        })})
+      }
+    </script>
+  </body>

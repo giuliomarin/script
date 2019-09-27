@@ -60,17 +60,21 @@ info 'Generate hdpi'
 CURR_PATH=$DST_PATH/mipmap-hdpi
 mkdir -p $CURR_PATH
 convert "$SRC_FILE" -resize 72x72 "$CURR_PATH/ic_launcher.png"
+convert "$SRC_FILE" -resize 72x72 "$CURR_PATH/ic_launcher_round.png"
 info 'Generate mdpi'
 CURR_PATH=$DST_PATH/mipmap-mdpi
 mkdir -p $CURR_PATH
 convert "$SRC_FILE" -resize 48x48 "$CURR_PATH/ic_launcher.png"
+convert "$SRC_FILE" -resize 48x48 "$CURR_PATH/ic_launcher_round.png"
 info 'Generate xhdpi'
 CURR_PATH=$DST_PATH/mipmap-xhdpi
 mkdir -p $CURR_PATH
 convert "$SRC_FILE" -resize 96x96 "$CURR_PATH/ic_launcher.png"
+convert "$SRC_FILE" -resize 96x96 "$CURR_PATH/ic_launcher_round.png"
 info 'Generate xxhdpi'
 CURR_PATH=$DST_PATH/mipmap-xxhdpi
 mkdir -p $CURR_PATH
 convert "$SRC_FILE" -resize 144x144 "$CURR_PATH/ic_launcher.png"
+convert "$SRC_FILE" -resize 144x144 "$CURR_PATH/ic_launcher_round.png"
 
 info 'Generate Done.'
