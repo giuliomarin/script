@@ -1,0 +1,20 @@
+# Display colorized information output
+function _info() {
+    COLOR='\033[00;32m' # green
+    RESET='\033[00;00m' # white
+    echo -e "${COLOR}${@}${RESET}"
+}
+ 
+# Display colorized warning output
+function _warn() {
+    COLOR='\033[00;31m' # red
+    RESET='\033[00;00m' # white
+    echo -e "${COLOR}${@}${RESET}"
+}
+
+#####################
+# Test functions
+#####################
+
+_info "Test info"
+_warn "Test warning"
