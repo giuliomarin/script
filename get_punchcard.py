@@ -6,7 +6,7 @@ import sys
 import subprocess
 from matplotlib import pyplot as plt
 
-def getlog(folder):
+def getlog(folder, author):
     if not os.path.isdir(folder):
         return ''
     try:
@@ -16,17 +16,18 @@ def getlog(folder):
     except OSError:
         print('Git not installed?')
         sys.exit(-1)
+    entries = entries.decode("utf-8") 
     if entries == '':
         print('Not a git repository?')
         sys.exit(-1)
-    print '[%d] %s' % (len(entries.split('\n')), folder)
+    print('[%d] %s' % (len(entries.split('\n')), folder))
     return entries
 
 
 if __name__ == '__main__':
 
     # get list of authors
-    # git log --pretty=format:"%an" | sort | uniq -c | sort -r
+    # git log --no-merges --pretty=format:"%an" | sort | uniq -c | sort -r
 
     # default values
     scaley = 1.7
@@ -44,18 +45,18 @@ if __name__ == '__main__':
     # get all the logs
     alllogs = ''
     for f in listdirs:
-        alllogs += getlog(f) + r'\n'
+        alllogs += getlog(f, author) + r'\n'
 
     # extract day and hour
     dayhour = [[x.strip().split(',')[0], x.strip().split(' ')[4].split(':')[0]] for x in alllogs.split('\n')]
 
     # compute statistics
     days = ['Sun', 'Sat', 'Fri', 'Thu', 'Wed', 'Tue', 'Mon']
-    hours = [str(x) for x in xrange(24)]
+    hours = [str(x) for x in range(24)]
     stats = {}
     for d in days:
         stats[d] = {}
-        for h in xrange(24):
+        for h in range(24):
             stats[d][h] = 0
     for dh in dayhour:
         stats[dh[0]][int(dh[1])] += 1.0
@@ -105,11 +106,11 @@ if __name__ == '__main__':
     # ax.yaxis.grid(True)
     ax.tick_params(axis=u'both', which=u'both', length=0)
     # plt.gca().xaxis.grid(True)
-    plt.title('Author: %s' % author if len(author) > 0 else '')
+    plt.title('[%d] Author: %s' % (len(dayhour), author if len(author) > 0 else ''))
     plt.axis('scaled')
     ax.set_xlim([x[0] - 1, x[-1] + 1])
     ax.set_ylim([y[0] - 1, y[-1] + 1])
-    for spine in ax.spines.itervalues():
-        spine.set_visible(False)
+    for spine in ax.spines.items():
+        spine[1].set_visible(False)
     plt.savefig('punchcard.png', dpi = 200)
     plt.show()
