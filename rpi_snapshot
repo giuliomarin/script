@@ -2,7 +2,7 @@ d=`date '+%Y_%m_%d_%H_%M_%S'`
 echo "Date $d"
 mkdir -p /home/pi/tmp
 # python /home/pi/git/script/rpi_camera.py /home/pi/tmp/${d}.jpg
-ffmpeg -loglevel fatal -i rtsp://localhost:8554/unicast -vframes 1 -y -r 1 /home/pi/${d}.jpg
+ffmpeg -loglevel fatal -i rtsp://localhost:8554/unicast -vframes 1 -y -r 1 /home/pi/tmp/${d}.jpg
 
 # Keep most recent N images
 N=3000
