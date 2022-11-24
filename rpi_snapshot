@@ -7,7 +7,7 @@ v=$(convert /tmp/rpi_tmp.jpg -set colorspace Gray -resize 1x1 -format "%[fx:int(
 if [[ $v -gt 15 ]]; then
   mv /tmp/rpi_tmp.jpg /home/pi/tmp/${d}.jpg
 else
-  echo "Image too dark"
+  echo "Image too dark: avg $v"
 fi
 
 # Keep most recent N images
