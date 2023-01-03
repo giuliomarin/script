@@ -6,12 +6,12 @@ mkdir -p /home/pi/tmp
 raspistill -w 1640 -h 1232 -o /tmp/rpi_tmp.jpg
 v=$(convert /tmp/rpi_tmp.jpg -set colorspace Gray -resize 1x1 -format "%[fx:int(255*g+.5)]" info:-)
 if [[ $v -gt 15 ]]; then
-  mv /tmp/rpi_tmp.jpg /home/pi/tmp/${d}.jpg
+  mv /tmp/rpi_tmp.jpg ${IN_DIR}/${d}.jpg
 else
   echo "Image too dark: avg $v"
 fi
 
 # Keep most recent N images
-N=5000
-cd /home/pi/tmp
+N=10000
+cd ${IN_DIR}
 ls -r1 *.jpg | awk -v N=$N 'NR>N' | xargs rm

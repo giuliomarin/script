@@ -1,6 +1,6 @@
 printf "\n======\nGenerate project for XCode\n======\n\n"
 
-projects=('/Users/giulio/git/qosmio/oxygen' '/Users/giulio/git/CommonTools/submodules/Nitrogen' '/Users/giulio/git/cvip-cpp' '/Users/giulio/git/Fusion' '/Users/giulio/git/opengl')
+projects=('/Users/giulio/git/qboid/oxygen' '/Users/giulio/git/CommonTools/submodules/Nitrogen' '/Users/giulio/git/cvip-cpp' '/Users/giulio/git/Fusion' '/Users/giulio/git/opengl')
 
 i=0
 for p in ${projects[*]}; do
