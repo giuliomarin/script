@@ -1,18 +1,22 @@
 d=`date '+%Y_%m_%d'`
 echo "Making video for date $d"
-mkdir -p /home/pi/tmp_viz
-for f in /home/pi/tmp/${d}*.jpg; do n="`echo $f | awk -F/ '{print $NF}' | awk -F_ '{print $1"/"$2"/"$3" "$4":"$5}'`"; convert -gravity SouthWest -pointSize 25 -fill white -stroke black -annotate +20+20 "${n}" $f `echo $f | sed 's/tmp/tmp_viz/'`; done
-ffmpeg -y -framerate 10 -pattern_type glob -i "/home/pi/tmp_viz/${d}*.jpg" -c:v libx264 /home/pi/tmp/${d}.mp4
+IN_DIR="/home/pi/tmp"
+TMP_DIR="/home/pi/tmp_viz"
+OUT_DIR="/home/pi/tmp"
+mkdir -p ${TMP_DIR}
+mkdir -p ${OUT_DIR}
+for f in ${IN_DIR}/${d}*.jpg; do n="`echo $f | awk -F/ '{print $NF}' | awk -F_ '{print $1"/"$2"/"$3" "$4":"$5}'`"; convert -gravity SouthWest -pointSize 25 -fill white -stroke black -annotate +20+20 "${n}" $f `echo $f | sed 's/tmp/tmp_viz/'`; done
+ffmpeg -y -framerate 10 -pattern_type glob -i "${TMP_DIR}/${d}*.jpg" -c:v libx264 ${OUT_DIR}/${d}.mp4
 
 t=08_00
 echo "Making video for time $t"
-ffmpeg -y -framerate 10 -pattern_type glob -i "/home/pi/tmp_viz/2019_0*_*_${t}_*.jpg" -c:v libx264 /home/pi/tmp/all_${t}.mp4
+ffmpeg -y -framerate 10 -pattern_type glob -i "${TMP_DIR}/2019_0*_*_${t}_*.jpg" -c:v libx264 ${OUT_DIR}/all_${t}.mp4
 t=12_00
 echo "Making video for time $t"
-ffmpeg -y -framerate 10 -pattern_type glob -i "/home/pi/tmp_viz/2019_0*_*_${t}_*.jpg" -c:v libx264 /home/pi/tmp/all_${t}.mp4
+ffmpeg -y -framerate 10 -pattern_type glob -i "${TMP_DIR}/2019_0*_*_${t}_*.jpg" -c:v libx264 ${OUT_DIR}/all_${t}.mp4
 t=16_00
 echo "Making video for time $t"
-ffmpeg -y -framerate 10 -pattern_type glob -i "/home/pi/tmp_viz/2019_0*_*_${t}_*.jpg" -c:v libx264 /home/pi/tmp/all_${t}.mp4
+ffmpeg -y -framerate 10 -pattern_type glob -i "${TMP_DIR}/2019_0*_*_${t}_*.jpg" -c:v libx264 ${OUT_DIR}/all_${t}.mp4
 
 # Keep most recent N images
 N=5000

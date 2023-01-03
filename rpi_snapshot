@@ -1,17 +1,18 @@
 d=`date '+%Y_%m_%d_%H_%M_%S'`
 echo "Date $d"
-mkdir -p /home/pi/tmp
-# python /home/pi/git/script/rpi_camera.py /home/pi/tmp/${d}.jpg
+DIR_PATH="/home/pi/timelapse"
+mkdir -p ${DIR_PATH}
+# python /home/pi/git/script/rpi_camera.py ${DIR_PATH}/${d}.jpg
 #ffmpeg -loglevel fatal -rtsp_transport tcp -i rtsp://localhost:8554/unicast -vframes 1 -y -r 1 /tmp/rpi_tmp.jpg
-raspistill -w 1640 -h 1232 -o /tmp/rpi_tmp.jpg
-v=$(convert /tmp/rpi_tmp.jpg -set colorspace Gray -resize 1x1 -format "%[fx:int(255*g+.5)]" info:-)
+raspistill -w 1640 -h 1232 -o ${DIR_PATH}/tmp.jpg
+v=$(convert ${DIR_PATH}/tmp.jpg -set colorspace Gray -resize 1x1 -format "%[fx:int(255*g+.5)]" info:-)
 if [[ $v -gt 15 ]]; then
-  mv /tmp/rpi_tmp.jpg /home/pi/tmp/${d}.jpg
+  mv ${DIR_PATH}/tmp.jpg ${DIR_PATH}/${d}.jpg
 else
   echo "Image too dark: avg $v"
 fi
 
 # Keep most recent N images
 N=1000
-cd /home/pi/tmp
+cd ${DIR_PATH}
 ls -r1 *.jpg | awk -v N=$N 'NR>N' | xargs rm
