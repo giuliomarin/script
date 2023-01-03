@@ -2,7 +2,8 @@ d=`date '+%Y_%m_%d_%H_%M_%S'`
 echo "Date $d"
 mkdir -p /home/pi/tmp
 # python /home/pi/git/script/rpi_camera.py /home/pi/tmp/${d}.jpg
-ffmpeg -loglevel fatal -i rtsp://localhost:8554/unicast -vframes 1 -y -r 1 /tmp/rpi_tmp.jpg
+#ffmpeg -loglevel fatal -rtsp_transport tcp -i rtsp://localhost:8554/unicast -vframes 1 -y -r 1 /tmp/rpi_tmp.jpg
+raspistill -w 1640 -h 1232 -o /tmp/rpi_tmp.jpg
 v=$(convert /tmp/rpi_tmp.jpg -set colorspace Gray -resize 1x1 -format "%[fx:int(255*g+.5)]" info:-)
 if [[ $v -gt 15 ]]; then
   mv /tmp/rpi_tmp.jpg /home/pi/tmp/${d}.jpg
@@ -11,6 +12,6 @@ else
 fi
 
 # Keep most recent N images
-N=10000
+N=5000
 cd /home/pi/tmp
 ls -r1 *.jpg | awk -v N=$N 'NR>N' | xargs rm

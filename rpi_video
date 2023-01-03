@@ -15,6 +15,6 @@ echo "Making video for time $t"
 ffmpeg -y -framerate 10 -pattern_type glob -i "/home/pi/tmp_viz/2019_0*_*_${t}_*.jpg" -c:v libx264 /home/pi/tmp/all_${t}.mp4
 
 # Keep most recent N images
-N=10000
+N=5000
 cd /home/pi/tmp_viz
 ls -r1 *.jpg | awk -v N=$N 'NR>N' | xargs rm
