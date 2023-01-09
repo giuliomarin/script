@@ -7,7 +7,7 @@ mkdir -p ${DIR_PATH}
 libcamera-still --width 1640 --height 1232 -v 0 -o ${DIR_PATH}/tmp.jpg
 v=$(convert ${DIR_PATH}/tmp.jpg -set colorspace Gray -resize 1x1 -format "%[fx:int(255*g+.5)]" info:-)
 if [[ $v -gt 15 ]]; then
-  mv ${DIR_PATH}/tmp.jpg ${DIR_PATH}/${d}.jpg
+  cp ${DIR_PATH}/tmp.jpg ${DIR_PATH}/${d}.jpg
 else
   echo "Image too dark: avg $v"
 fi
