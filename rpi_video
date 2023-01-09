@@ -1,12 +1,13 @@
 d=`date '+%Y_%m_%d'`
 echo "Making video for date $d"
-IN_DIR="/Users/giulio/Desktop/garden"
-TMP_DIR="/tmp/tmp_viz"
-OUT_DIR="${IN_DIR}"
+IN_DIR="/Users/giulio/Desktop/timelapse"
+TMP_DIR="${IN_DIR}/tmp_viz"
+OUT_DIR="/Users/giulio/Desktop/timelapse_video"
+rm -r ${TMP_DIR}
 mkdir -p ${TMP_DIR}
 mkdir -p ${OUT_DIR}
-for f in ${IN_DIR}/${d}*.jpg; do n="`echo $f | awk -F/ '{print $NF}' | awk -F_ '{print $1"/"$2"/"$3" "$4":"$5}'`"; convert -gravity SouthWest -pointSize 30 -fill white -stroke black -annotate +20+20 "${n}" $f $(echo $f | sed "s|${IN_DIR}|${TMP_DIR}|"); done
-ffmpeg -y -framerate 5 -pattern_type glob -i "${TMP_DIR}/${d}*.jpg" -c:v libx264 ${OUT_DIR}/${d}.mp4
+for f in ${IN_DIR}/${d}*.jpg; do n="`echo $f | awk -F/ '{print $NF}' | awk -F_ '{print $1"/"$2"/"$3" "$4":"$5}'`"; convert -gravity SouthWest -pointSize 50 -fill white -stroke black -annotate +20+20 "${n}" $f $(echo $f | sed "s|${IN_DIR}|${TMP_DIR}|"); done
+ffmpeg -y -framerate 10 -pattern_type glob -i "${TMP_DIR}/${d}*.jpg" -c:v libx264 ${OUT_DIR}/${d}.mov
 
 # t=08_00
 # echo "Making video for time $t"

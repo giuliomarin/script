@@ -4,7 +4,7 @@ DIR_PATH="/home/pi/timelapse"
 mkdir -p ${DIR_PATH}
 # python /home/pi/git/script/rpi_camera.py ${DIR_PATH}/${d}.jpg
 #ffmpeg -loglevel fatal -rtsp_transport tcp -i rtsp://localhost:8554/unicast -vframes 1 -y -r 1 /tmp/rpi_tmp.jpg
-raspistill -w 1640 -h 1232 -o ${DIR_PATH}/tmp.jpg
+libcamera-still --width 1640 --height 1232 -v 0 - ${DIR_PATH}/tmp.jpg
 v=$(convert ${DIR_PATH}/tmp.jpg -set colorspace Gray -resize 1x1 -format "%[fx:int(255*g+.5)]" info:-)
 if [[ $v -gt 15 ]]; then
   mv ${DIR_PATH}/tmp.jpg ${DIR_PATH}/${d}.jpg
